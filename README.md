@@ -1,174 +1,90 @@
-# ⚡ ЭнергоМаркет
+# ЭнергоМаркет
 
-Учебный проект — интернет-магазин энергетических напитков.
+Учебный проект по дисциплине "Веб-разработка". Интернет-магазин энергетических напитков.
 
-**Стек:** FastAPI (Python) + HTML/CSS/JS + PostgreSQL  
-**Хостинг:** Railway.app
+## Стек
 
----
+- **Бэкенд:** Python, FastAPI, SQLAlchemy
+- **Фронтенд:** HTML, CSS, JavaScript
+- **БД:** PostgreSQL
+- **Хостинг:** Railway
 
 ## Структура проекта
 
 ```
 energy-shop/
 ├── backend/
-│   ├── main.py          # FastAPI — все маршруты API
-│   ├── models.py        # Модели базы данных (таблицы)
-│   ├── database.py      # Подключение к PostgreSQL
-│   ├── requirements.txt # Зависимости Python
-│   └── Procfile         # Команда запуска для Railway
+│   ├── main.py          # маршруты API
+│   ├── models.py        # модели БД
+│   ├── database.py      # подключение к БД
+│   ├── requirements.txt
+│   └── Procfile
 └── frontend/
-    ├── index.html       # Главная страница (список товаров)
-    ├── product.html     # Страница конкретного товара
-    ├── cart.html        # Корзина
-    ├── login.html       # Вход и регистрация
-    ├── about.html       # О компании
-    ├── admin.html       # Панель администратора
-    ├── css/style.css    # Стили
-    └── js/api.js        # Общие функции для запросов к API
+    ├── index.html       # список товаров
+    ├── product.html     # страница товара
+    ├── cart.html        # корзина
+    ├── login.html       # вход / регистрация
+    ├── about.html       # о компании
+    ├── admin.html       # панель администратора
+    ├── css/style.css
+    └── js/api.js
 ```
 
----
+## Запуск
 
-## Запуск локально (на своём компьютере)
+### Требования
+- Python 3.10+
+- PostgreSQL
 
-### 1. Установи Python и PostgreSQL
-
-- Python: https://python.org (версия 3.10+)
-- PostgreSQL: https://postgresql.org
-
-### 2. Создай базу данных
-
-Открой pgAdmin или psql и выполни:
-```sql
-CREATE DATABASE energyshop;
-CREATE USER energyuser WITH PASSWORD 'energypass';
-GRANT ALL PRIVILEGES ON DATABASE energyshop TO energyuser;
-```
-
-### 3. Настрой бэкенд
+### Установка
 
 ```bash
 cd backend
-
-# Создай виртуальное окружение (изолированная среда для Python)
 python -m venv venv
-
-# Активируй его (Windows):
-venv\Scripts\activate
-
-# Активируй его (Mac/Linux):
-source venv/bin/activate
-
-# Установи зависимости
+venv\Scripts\activate       # Windows
+# source venv/bin/activate  # Mac/Linux
 pip install -r requirements.txt
 ```
 
-### 4. Задай переменную окружения с адресом БД
-
-Windows (PowerShell):
-```powershell
-$env:DATABASE_URL="postgresql://energyuser:energypass@localhost/energyshop"
+Создать БД в PostgreSQL:
+```sql
+CREATE DATABASE energyshop;
 ```
 
-Mac/Linux:
+Задать переменную окружения:
 ```bash
-export DATABASE_URL="postgresql://energyuser:energypass@localhost/energyshop"
+DATABASE_URL=postgresql://user:password@localhost/energyshop
 ```
 
-### 5. Запусти бэкенд
-
+Запустить сервер:
 ```bash
 uvicorn main:app --reload
 ```
 
-Бэкенд запустится на http://localhost:8000  
-Документация API: http://localhost:8000/docs  ← очень удобно для проверки!
+Документация API доступна по адресу `http://localhost:8000/docs`
 
-### 6. Заполни базу тестовыми данными
+Заполнить БД тестовыми данными: `GET /api/seed`  
+Тестовый аккаунт администратора: `admin@energyshop.ru` / `admin123`
 
-Открой в браузере:
-```
-http://localhost:8000/api/seed
-```
+### Фронтенд
 
-Это создаст:
-- 8 товаров
-- Аккаунт администратора: `admin@energyshop.ru` / `admin123`
+Открыть `frontend/index.html` в браузере или использовать Live Server в VS Code.
 
-### 7. Открой фронтенд
+## Функционал
 
-Просто открой файл `frontend/index.html` в браузере.  
-Или используй расширение **Live Server** в VS Code.
+- Просмотр каталога товаров с фильтрацией по бренду
+- Страница отдельного товара с подробным описанием
+- Регистрация и авторизация (JWT)
+- Корзина для авторизованных пользователей
+- Админ-панель для управления товарами (CRUD)
 
----
+## Роли
 
-## Деплой на Railway
-
-### Шаг 1 — GitHub
-
-```bash
-# В корне проекта (папка energy-shop)
-git init
-git add .
-git commit -m "первый коммит"
-
-# Создай репозиторий на github.com, затем:
-git remote add origin https://github.com/ТВО_ИМЯ/energy-shop.git
-git push -u origin main
-```
-
-### Шаг 2 — Railway
-
-1. Зайди на https://railway.app и войди через GitHub
-2. Нажми **"New Project"** → **"Deploy from GitHub repo"**
-3. Выбери свой репозиторий `energy-shop`
-4. Railway спросит какую папку деплоить — укажи `backend`
-5. Нажми **"Add Service"** → **"Database"** → **"PostgreSQL"**
-6. Railway автоматически добавит переменную `DATABASE_URL` — ничего не нужно делать вручную!
-7. В настройках сервиса (Variables) добавь переменную:
-   - `SECRET_KEY` = любая длинная случайная строка, например `mySuperSecretKey2024`
-
-### Шаг 3 — Обнови адрес API во фронтенде
-
-В файле `frontend/js/api.js` замени строку:
-```javascript
-const API_URL = "http://localhost:8000";
-```
-на URL твоего Railway-сервиса, например:
-```javascript
-const API_URL = "https://energy-shop-production.up.railway.app";
-```
-
-### Шаг 4 — Фронтенд
-
-Фронтенд — это просто HTML-файлы. Их можно:
-- Хостить на **GitHub Pages** (бесплатно): Settings → Pages → Deploy from branch → /frontend
-- Или положить в папку `backend/static/` и раздавать через FastAPI
-
-### Шаг 5 — Заполни тестовыми данными
-
-После деплоя открой в браузере:
-```
-https://ТВО_URL.railway.app/api/seed
-```
-
----
-
-## Роли пользователей
-
-| Роль | Что может |
-|------|-----------|
-| Гость | Смотреть товары |
-| Пользователь | Смотреть товары + корзина |
-| Администратор | Всё выше + добавлять/редактировать/удалять товары |
-
-Сменить роль пользователя на admin можно через psql:
-```sql
-UPDATE users SET role = 'admin' WHERE email = 'почта@пример.ru';
-```
-
----
+| Роль | Права |
+|------|-------|
+| Гость | Просмотр товаров |
+| Пользователь | Просмотр + корзина |
+| Администратор | Полное управление товарами |
 
 ## API эндпоинты
 
