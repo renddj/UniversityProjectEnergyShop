@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Товар — ЭнергоМаркет</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <a class="logo" href="index.html">⚡ ЭнергоМаркет</a>
+        <nav>
+            <a href="index.html">Товары</a>
+            <a href="about.html">О компании</a>
+            <a href="cart.html" id="nav-cart" style="display:none">🛒 Корзина</a>
+            <a href="admin.html" id="nav-admin" style="display:none">⚙️ Админ</a>
+            <span id="nav-auth"></span>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+    <p style="margin-top:20px; font-size:14px; color:#888;">
+        <a href="index.html">← Назад к товарам</a>
+    </p>
+
+    <div id="product-container">
+        <p style="margin-top:20px;">Загрузка...</p>
+    </div>
+</div>
+
+<footer>
+    <div class="container">© 2024 ЭнергоМаркет. Учебный проект.</div>
+</footer>
+
+<script src="js/api.js"></script>
+<script>
+    // Получаем ID товара из URL: product.html?id=3
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
+
+    async function loadProduct() {
+        if (!productId) {
+            document.getElementById("product-container").innerHTML = "<p>Товар не указан.</p>";
+            return;
+        }
+
+        try {
+            const p = await apiRequest("GET", `/api/products/${productId}`);
+
+            document.title = `${p.name} — ЭнергоМаркет`;
+
+            const user = getUser();
+            // Кнопка "В корзину" — только для авторизованных
+            let cartButton = "";
+            if (user) {
+                if (p.in_stock) {
+                    cartButton = `<button class="btn btn-red" onclick="addToCart(${p.id})">🛒 Добавить в корзину</button>`;
+                } else {
+                    cartButton = `<span class="out-of-stock" style="font-size:15px;">Нет в наличии</span>`;
+                }
+            } else {
+                cartButton = `<a href="login.html" class="btn btn-gray">Войдите, чтобы купить</a>`;
+            }
+
+            document.getElementById("product-container").innerHTML = `
+                <div class="product-detail">
+                    <img src="${p.image_url}" alt="${p.name}">
+                    <div class="product-detail-info">
+                        <div class="brand">${p.brand} · ${p.volume}</div>
+                        <h1>${p.name}</h1>
+                        <div class="price">${p.price} ₽</div>
+                        <p class="full-desc">${p.full_description}</p>
+                        <div class="volume">Объём: ${p.volume}</div>
+                        ${cartButton}
+                        <p id="cart-msg" class="success-msg" style="display:none">✅ Товар добавлен в корзину!</p>
+                    </div>
+                </div>
+            `;
+        } catch (e) {
+            document.getElementById("product-container").innerHTML =
+                `<p style="color:red; margin-top:20px;">Ошибка: ${e.message}</p>`;
+        }
+    }
+
+    async function addToCart(productId) {
+        try {
+            await apiRequest("POST", "/api/cart", { product_id: productId, quantity: 1 });
+            document.getElementById("cart-msg").style.display = "block";
+        } catch (e) {
+            alert("Ошибка добавления в корзину: " + e.message);
+        }
+    }
+
+    loadProduct();
+</script>
+
+</body>
+</html>
