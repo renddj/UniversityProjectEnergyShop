@@ -7,9 +7,10 @@ from sqlalchemy.orm import sessionmaker
 # Для локальной разработки можно задать в файле .env
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost/energyshop")
 
-# Railway иногда даёт URL начинающийся с postgres://, SQLAlchemy требует postgresql://
+# Приводим URL к нужному формату
 if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
+elif DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
 
 engine = create_engine(DATABASE_URL)
