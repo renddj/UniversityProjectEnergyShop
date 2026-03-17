@@ -2,7 +2,7 @@
 // Этот файл подключается на каждой странице
 
 // Адрес бэкенда — при деплое замени на реальный URL Railway
-const API_URL = "https://universityprojectenergyshop-production.up.railway.app";
+const API_URL = "";
 
 // ──────────────────────────────────────────
 // Работа с токеном (авторизация)

@@ -372,3 +372,18 @@ def seed_db(db: Session = Depends(get_db)):
 
     db.commit()
     return {"message": "База данных заполнена тестовыми данными", "admin_email": "admin@energyshop.ru", "admin_password": "admin123"}
+
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+app.mount("/css", StaticFiles(directory="frontend/css"), name="css")
+app.mount("/js", StaticFiles(directory="frontend/js"), name="js")
+
+@app.get("/", response_class=FileResponse)
+def serve_index():
+    return "frontend/index.html"
+
+@app.get("/{page}.html", response_class=FileResponse)
+def serve_page(page: str):
+    return f"frontend/{page}.html"
