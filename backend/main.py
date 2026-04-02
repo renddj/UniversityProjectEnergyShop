@@ -756,7 +756,7 @@ def seed_db(db: Session = Depends(get_db)):
         },
     ]
 
-    if db.query(models.Product).count() == 0:
+    if db.query(models.Product).count() >= 0:
         for p in sample_products:
             db.add(models.Product(**p))
 
