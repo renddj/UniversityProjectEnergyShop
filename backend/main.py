@@ -543,7 +543,7 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
 
 @app.get("/api/me", summary="Информация о текущем пользователе")
 def get_me(current_user = Depends(require_auth)):
-    return {"id": current_user.id, "username": current_user.username, "role": current_user.role}
+    return {"id": current_user.id, "username": current_user.username, "email": current_user.email, "role": current_user.role}
 
 
 # ──────────────────────────────────────────

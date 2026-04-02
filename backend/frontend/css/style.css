@@ -271,3 +271,46 @@ footer {
 .badge-admin { background: #e63946; color: white; }
 .badge-instock { background: #d4edda; color: #155724; }
 .badge-outofstock { background: #f8d7da; color: #721c24; }
+
+/* Custom radio buttons */
+.radio-group { display: flex; flex-direction: column; gap: 10px; }
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.radio-option:hover { border-color: #bbb; }
+.radio-option input[type="radio"] { display: none; }
+.radio-option input[type="radio"] + div::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    background-color: #f9f9f9;
+    vertical-align: middle;
+    margin-right: 12px;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+.radio-option input[type="radio"]:checked + div::before {
+    background-color: #e63946;
+    border-color: #e63946;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="white"><circle cx="6" cy="6" r="3"/></svg>');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.radio-option input[type="radio"]:checked + div { font-weight: bold; }
+.radio-option:has(input:checked) {
+    border-color: #e63946;
+    box-shadow: 0 0 5px rgba(230, 57, 70, 0.3);
+}
+.radio-label { flex: 1; }
+.radio-price { font-weight: bold; margin-left: auto; }
+

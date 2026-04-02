@@ -199,7 +199,8 @@
 
     // ── Загрузка корзины ──────────────────────
 
-    async function loadCheckoutCart() {
+    async function loadCheckoutCart() 
+    {
         if (isLoggedIn()) {
             try { cartItems = await apiRequest("GET", "/api/cart"); }
             catch (e) { cartItems = []; }
@@ -212,10 +213,15 @@
             return;
         }
 
-        // Предзаполняем email если авторизован
-        const user = getUser();
-        if (user && user.username) {
-            // email неизвестен из localStorage, просто оставим пустым
+        // Если пользователь авторизован, пытаемся предзаполнить email
+        if (isLoggedIn()) {
+            const userProfile = await fetchCurrentUser();
+            if (userProfile && userProfile.email) {
+                const emailInput = document.getElementById("co-email");
+                emailInput.value = userProfile.email;
+                emailInput.readOnly = true;
+                emailInput.style.backgroundColor = "#f0f0f0"; // Обозначить как только для чтения
+            }
         }
 
         renderSummary();
@@ -269,11 +275,21 @@
     function goStep(n) {
         // Валидация при переходе вперёд
         if (n === 2) {
-            const name  = document.getElementById("co-name").value.trim();
-            const phone = document.getElementById("co-phone").value.trim();
-            const email = document.getElementById("co-email").value.trim();
+            const nameInput  = document.getElementById("co-name");
+            const phoneInput = document.getElementById("co-phone");
+            const emailInput = document.getElementById("co-email");
             const err   = document.getElementById("step1-error");
-            if (!name || !phone || !email) {
+
+            const name  = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const email = emailInput.value.trim();
+
+            let hasError = false;
+            if (!name) hasError = true;
+            if (!phone) hasError = true;
+            if (!email && !emailInput.readOnly) hasError = true; // Validate email only if not read-only and empty
+
+            if (hasError) {
                 err.textContent = "Пожалуйста, заполните все обязательные поля.";
                 err.style.display = "block";
                 return;

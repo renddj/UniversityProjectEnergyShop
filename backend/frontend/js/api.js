@@ -17,6 +17,17 @@ function getUser() {
     return user ? JSON.parse(user) : null;
 }
 
+// Запрос полной информации о текущем пользователе
+async function fetchCurrentUser() {
+    if (!isLoggedIn()) return null;
+    try {
+        return await apiRequest("GET", "/api/users/me");
+    } catch (error) {
+        console.error("Ошибка при получении данных пользователя:", error);
+        return null;
+    }
+}
+
 function saveAuth(token, username, role) {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify({ username, role }));
