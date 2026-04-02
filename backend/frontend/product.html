@@ -38,6 +38,9 @@
 
 <script src="js/api.js"></script>
 <script>
+    // Обновляем состояние навигационной панели
+    updateNavbar();
+
     // Получаем ID товара из URL: product.html?id=3
     const params = new URLSearchParams(window.location.search);
     const productId = params.get("id");
