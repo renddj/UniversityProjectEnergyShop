@@ -147,22 +147,19 @@
 
 <script>
 
-    
-    async function loadCart() {
-        let items = [];
+    // Обновляем состояние навигационной панели при загрузке страницы
+    updateNavbar();
 
-        if (isLoggedIn()) {
-            try { items = await apiRequest("GET", "/api/cart"); }
-            catch (e) {
-                document.getElementById("cart-container").innerHTML =
-                    `<p style="color:red">Ошибка загрузки корзины: ${e.message}</p>`;
-                return;
-            }
-        } else {
-            items = getGuestCart();
+    async function loadCart() {
+        // Если пользователь не авторизован, перенаправляем его на страницу входа
+        if (!isLoggedIn()) {
+            window.location.href = "login.html";
+            return;
         }
 
-        const container = document.getElementById("cart-container");
+        try {
+            const items = await apiRequest("GET", "/api/cart");
+            const container = document.getElementById("cart-container");
 
         if (items.length === 0) {
             container.innerHTML = `
@@ -185,7 +182,7 @@
                 </div>
                 <div style="text-align:right;">
                     <p style="font-weight:bold; margin-bottom:8px;">${(item.product.price * item.quantity).toFixed(0)} ₽</p>
-                    <button class="btn btn-danger btn-small" onclick="removeItem('${item.cart_item_id}', ${item.product.id})">Удалить</button>
+                    <button class="btn btn-danger btn-small" onclick="removeItem(${item.cart_item_id})">Удалить</button>
                 </div>
             </div>
         `).join("") + `
@@ -198,20 +195,20 @@
                 <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
                     <a href="checkout.html" class="btn btn-red">Оформить заказ →</a>
                     <a href="index.html" class="btn btn-gray">Продолжить покупки</a>
-                    ${!isLoggedIn() ? `<p style="font-size:13px; color:#888; margin-top:10px; width:100%;">💡 <a href="login.html">Войдите</a>, чтобы история заказов сохранялась в личном кабинете.</p>` : ""}
                 </div>
             </div>
         `;
+        } catch (e) {
+            document.getElementById("cart-container").innerHTML =
+                `<p style="color:red">Ошибка загрузки корзины: ${e.message}</p>`;
+        }
     }
 
-    async function removeItem(cartItemId, productId) {
-        if (isLoggedIn()) {
-            try {
-                await apiRequest("DELETE", `/api/cart/${cartItemId}`);
-            } catch (e) { alert("Ошибка: " + e.message); return; }
-        } else {
-            removeFromGuestCart(productId);
-        }
+    async function removeItem(cartItemId) {
+        try {
+            await apiRequest("DELETE", `/api/cart/${cartItemId}`);
+        } catch (e) { alert("Ошибка: " + e.message); return; }
+        // Перезагружаем корзину, чтобы обновить список и итоговую сумму
         loadCart();
     }
 
