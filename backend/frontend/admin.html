@@ -110,6 +110,11 @@
 
 <script src="js/api.js"></script>
 <script>
+
+    
+    // Обновляем состояние навигационной панели
+    updateNavbar();
+
     // Проверка доступа — только администратор
     document.addEventListener("DOMContentLoaded", () => {
         if (!isLoggedIn()) {
