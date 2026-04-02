@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -92,111 +92,6 @@
         } catch (e) {
             alert("Ошибка добавления в корзину: " + e.message);
         }
-    }
-
-    loadProduct();
-</script>
-
-</body>
-</html> -->
-
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Товар — ЭнергоМаркет</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/api.js"></script>
-</head>
-<body>
-
-<header>
-    <div class="container">
-        <a class="logo" href="index.html">⚡ ЭнергоМаркет</a>
-                <nav>
-            <a href="index.html">Товары</a>
-            <a href="about.html">О компании</a>
-            <a href="delivery.html">Доставка и оплата</a>
-            <a href="cart.html" class="nav-cart-link">🛒 Корзина <span id="cart-badge" class="cart-badge" style="display:none">0</span></a>
-            <a href="admin.html" id="nav-admin" style="display:none">⚙️ Админ</a>
-            <span id="nav-auth"></span>
-        </nav>
-    </div>
-</header>
-
-<div class="container">
-    <p style="margin-top:20px; font-size:14px; color:#888;">
-        <a href="index.html">← Назад к товарам</a>
-    </p>
-
-    <div id="product-container">
-        <p style="margin-top:20px;">Загрузка...</p>
-    </div>
-</div>
-
-<footer>
-    <div class="container" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; align-items:center;">
-        <span>© 2025 ЭнергоМаркет. Учебный проект.</span>
-        <div style="display:flex; gap:20px; font-size:13px;">
-            <a href="delivery.html">Доставка и оплата</a>
-            <a href="about.html">О компании</a>
-            <a href="about.html#contacts">Контакты</a>
-        </div>
-    </div>
-</footer>
-
-<script>
-    // Получаем ID товара из URL: product.html?id=3
-    const params = new URLSearchParams(window.location.search);
-    const productId = params.get("id");
-
-    async function loadProduct() {
-        if (!productId) {
-            document.getElementById("product-container").innerHTML = "<p>Товар не указан.</p>";
-            return;
-        }
-
-        try {
-            const p = await apiRequest("GET", `/api/products/${productId}`);
-
-            document.title = `${p.name} — ЭнергоМаркет`;
-
-            const user = getUser();
-            // Кнопка "В корзину" — работает и для гостей
-            let cartButton = "";
-            if (p.in_stock) {
-                cartButton = `<button class="btn btn-red" onclick="doAddToCart()">🛒 Добавить в корзину</button>`;
-            } else {
-                cartButton = `<span class="out-of-stock" style="font-size:15px;">Нет в наличии</span>`;
-            }
-            window._currentProduct = p;
-            document.getElementById("product-container").innerHTML = `
-                <div class="product-detail">
-                    <img src="${p.image_url}" alt="${p.name}">
-                    <div class="product-detail-info">
-                        <div class="brand">${p.brand} · ${p.volume}</div>
-                        <h1>${p.name}</h1>
-                        <div class="price">${p.price} ₽</div>
-                        <p class="full-desc">${p.full_description}</p>
-                        <div class="volume">Объём: ${p.volume}</div>
-                        ${cartButton}
-                        <p id="cart-msg" class="success-msg" style="display:none">✅ Товар добавлен в корзину!</p>
-                    </div>
-                </div>
-            `;
-        } catch (e) {
-            document.getElementById("product-container").innerHTML =
-                `<p style="color:red; margin-top:20px;">Ошибка: ${e.message}</p>`;
-        }
-    }
-
-    async function doAddToCart() {
-        const p = window._currentProduct;
-        if (!p) return;
-        await addToCartUnified(p, () => {
-            document.getElementById("cart-msg").style.display = "block";
-        });
     }
 
     loadProduct();
