@@ -112,7 +112,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Корзина — ЭнергоМаркет</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/api.js" defer></script>
+    <script src="js/api.js"></script>
 </head>
 <body>
 
@@ -146,9 +146,6 @@
 </footer>
 
 <script>
-
-    // Обновляем состояние навигационной панели при загрузке страницы
-    updateNavbar();
 
     async function loadCart() {
         // Если пользователь не авторизован, перенаправляем его на страницу входа
@@ -212,7 +209,12 @@
         loadCart();
     }
 
-    document.addEventListener("DOMContentLoaded", loadCart);
+    document.addEventListener("DOMContentLoaded", function() {
+        // Сначала обновляем шапку сайта
+        updateNavbar();
+        // Затем загружаем содержимое корзины
+        loadCart();
+    });
 </script>
 
 </body>
