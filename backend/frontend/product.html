@@ -107,6 +107,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Товар — ЭнергоМаркет</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="js/api.js" defer></script>
 </head>
 <body>
 
@@ -145,7 +146,6 @@
     </div>
 </footer>
 
-<script src="js/api.js"></script>
 <script>
     // Получаем ID товара из URL: product.html?id=3
     const params = new URLSearchParams(window.location.search);
@@ -171,7 +171,6 @@
                 cartButton = `<span class="out-of-stock" style="font-size:15px;">Нет в наличии</span>`;
             }
             window._currentProduct = p;
-
             document.getElementById("product-container").innerHTML = `
                 <div class="product-detail">
                     <img src="${p.image_url}" alt="${p.name}">
