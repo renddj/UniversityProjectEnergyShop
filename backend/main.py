@@ -686,8 +686,16 @@ def remove_from_cart(item_id: int, db: Session = Depends(get_db), current_user =
 
 @app.post("/api/seed", summary="Заполнить БД тестовыми товарами и админом")
 def seed_db(db: Session = Depends(get_db)):
-    # Создаём администратора если нет
-    if not db.query(models.User).filter(models.User.email == "admin@energyshop.ru").first():
+    # Удаляем старые данные в правильном порядке из-за внешних ключей
+    db.query(models.OrderItem).delete()
+    db.query(models.Order).delete()
+    db.query(models.CartItem).delete()
+    db.query(models.Product).delete()
+    db.query(models.User).delete()
+    db.commit()
+
+    # Создаём администратора
+    try:
         admin = models.User(
             username="admin",
             email="admin@energyshop.ru",
@@ -695,6 +703,10 @@ def seed_db(db: Session = Depends(get_db)):
             role="admin"
         )
         db.add(admin)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
 
     # Тестовые товары
     sample_products = [
@@ -756,11 +768,13 @@ def seed_db(db: Session = Depends(get_db)):
         },
     ]
 
-    if db.query(models.Product).count() >= 0:
+    try:
         for p in sample_products:
             db.add(models.Product(**p))
-
-    db.commit()
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     return {"message": "База данных заполнена тестовыми данными", "admin_email": "admin@energyshop.ru", "admin_password": "admin123"}
 
 
