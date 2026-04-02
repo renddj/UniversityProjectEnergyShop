@@ -21,7 +21,7 @@ function getUser() {
 async function fetchCurrentUser() {
     if (!isLoggedIn()) return null;
     try {
-        return await apiRequest("GET", "/api/users/me");
+        return await apiRequest("GET", "/api/me");
     } catch (error) {
         console.error("Ошибка при получении данных пользователя:", error);
         return null;
